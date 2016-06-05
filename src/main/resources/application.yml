@@ -1,0 +1,22 @@
+security:
+  basic:
+    enabled: false
+
+discoveryService:
+  prefixUrl: ${PC_DISCOVERY_SERVICE_PREFIX_URL:http://}
+  suffixUrl: ${PC_DISCOVERY_SERVICE_SUFFIX_URL:/hystrix/hystrix.stream}
+  fixedDelayMs: ${PC_DISCOVERY_SERVICE_FIXED_DELAY_MS:10000}
+
+staticDiscoveryClient:
+  services: 127.0.0.1:8080, 127.0.0.2:8080
+
+influxDB:
+  url: ${PC_INFLUXDB_URL:http://localhost:8086}
+  username: ${PC_INFLUXDB_USERNAME:root}
+  password: ${PC_INFLUXDB_PASSWORD:root}
+  dbName: ${PC_INFLUXDB_DBNAME:hystrix}
+
+debug: false
+spring:
+  main:
+    web-environment: false

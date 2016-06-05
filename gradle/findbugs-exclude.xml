@@ -1,0 +1,7 @@
+<FindBugsFilter>
+
+    <!-- add explanation before Match -->
+    <!-- examples http://findbugs.sourceforge.net/manual/filter.html -->
+    <!--ignore json deserialize exception-->
+
+</FindBugsFilter>
