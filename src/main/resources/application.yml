@@ -2,13 +2,11 @@ security:
   basic:
     enabled: false
 
-discoveryService:
-  prefixUrl: ${PC_DISCOVERY_SERVICE_PREFIX_URL:http://}
+hystrix:
   suffixUrl: ${PC_DISCOVERY_SERVICE_SUFFIX_URL:/hystrix/hystrix.stream}
-  fixedDelayMs: ${PC_DISCOVERY_SERVICE_FIXED_DELAY_MS:10000}
 
-staticDiscoveryClient:
-  services: 127.0.0.1:8080, 127.0.0.2:8080
+discoveryService:
+  fixedDelayMs: ${PC_DISCOVERY_SERVICE_FIXED_DELAY_MS:10000}
 
 influxDB:
   url: ${PC_INFLUXDB_URL:http://localhost:8086}
@@ -20,3 +18,8 @@ debug: false
 spring:
   main:
     web-environment: false
+  cloud:
+    consul:
+      discovery:
+        enabled: true
+      enabled: true

@@ -13,6 +13,7 @@ spring:
       discovery:
         health-check-interval: 10s
         health-check-path: ${management.context-path}/health
+      enabled: true
     config:
       discovery:
         enabled: true

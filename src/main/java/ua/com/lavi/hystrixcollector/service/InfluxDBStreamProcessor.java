@@ -6,10 +6,10 @@ import org.influxdb.dto.Point;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.stereotype.Component;
 import ua.com.lavi.hystrixcollector.config.properties.InfluxDBProperties;
 import ua.com.lavi.hystrixcollector.model.hystrix.HystrixData;
-import ua.com.lavi.hystrixcollector.model.hystrix.HystrixServiceStream;
 
 import java.util.concurrent.TimeUnit;
 
@@ -21,8 +21,8 @@ public class InfluxDBStreamProcessor {
 
     private final static Logger log = LoggerFactory.getLogger(InfluxDBStreamProcessor.class);
 
-    public static final String TAG_SERVICE_ID = "serviceId";
-    public static final String TAG_STREAM_URL = "streamUrl";
+    private static final String TAG_SERVICE_ID = "serviceId";
+    private static final String TAG_SERVICE_URL = "serviceUrl";
 
     private Gson gson = new Gson();
 
@@ -35,18 +35,19 @@ public class InfluxDBStreamProcessor {
         this.influxDBProperties = influxDBProperties;
     }
 
-    public Void process(String data, HystrixServiceStream hystrixServiceStream) {
+
+    public Void process(String data, ServiceInstance serviceInstance) {
         HystrixData hystrixResponse = gson.fromJson(data, HystrixData.class);
-        writeData(hystrixResponse, hystrixServiceStream);
+        writeData(hystrixResponse, serviceInstance);
         return null;
     }
 
-    private void writeData(HystrixData hystrixData, HystrixServiceStream hystrixServiceStream) {
+    private void writeData(HystrixData hystrixData, ServiceInstance serviceInstance) {
         try {
             Point point = Point.measurement(hystrixData.getName())
                     .time(System.currentTimeMillis(), TimeUnit.MILLISECONDS)
-                    .tag(TAG_SERVICE_ID, hystrixServiceStream.getId())
-                    .tag(TAG_STREAM_URL, hystrixServiceStream.getStreamUrl())
+                    .tag(TAG_SERVICE_ID, serviceInstance.getServiceId())
+                    .tag(TAG_SERVICE_URL, serviceInstance.getUri().toString())
                     .addField("isCircuitBreakerOpen", hystrixData.isCircuitBreakerOpen)
                     .addField("requestCount", hystrixData.getRequestCount())
                     .addField("errorPercentage", hystrixData.getErrorPercentage())

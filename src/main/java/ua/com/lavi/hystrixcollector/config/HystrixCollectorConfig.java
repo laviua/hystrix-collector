@@ -38,7 +38,8 @@ public class HystrixCollectorConfig {
 
     @Bean
     public InfluxDB influxDB() {
-        InfluxDB influxDB = InfluxDBFactory.connect(influxDBProperties.getUrl(), influxDBProperties.getUsername(), influxDBProperties.getPassword());
+        InfluxDB influxDB = InfluxDBFactory.connect(influxDBProperties.getUrl(), influxDBProperties.getUsername(),
+                influxDBProperties.getPassword());
         String dbName = influxDBProperties.getDbName();
         influxDB.createDatabase(dbName);
         return influxDB;

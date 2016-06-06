@@ -3,11 +3,10 @@ package ua.com.lavi.hystrixcollector.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.consul.discovery.ConsulDiscoveryClient;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import ua.com.lavi.hystrixcollector.config.properties.DiscoveryServiceProperties;
-import ua.com.lavi.hystrixcollector.model.hystrix.HystrixServiceStream;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -20,42 +19,41 @@ public class DiscoveryService {
 
     private final static Logger log = LoggerFactory.getLogger(DiscoveryService.class);
 
-    private final DiscoveryClient discoveryClient;
-    private final StreamSubscriptionService streamSubscriptionService;
-    private final DiscoveryServiceProperties discoveryServiceProperties;
-    private List<String> registeredServices = new CopyOnWriteArrayList<>();
+    private final ConsulDiscoveryClient discoveryClient;
+    private final HystrixSubscriptionService hystrixSubscriptionService;
+    private List<ServiceInstance> registeredServiceInstances = new CopyOnWriteArrayList<>();
 
     @Autowired
-    public DiscoveryService(DiscoveryClient discoveryClient, StreamSubscriptionService streamSubscriptionService, DiscoveryServiceProperties discoveryServiceProperties) {
+    public DiscoveryService(ConsulDiscoveryClient discoveryClient,
+            HystrixSubscriptionService hystrixSubscriptionService) {
         this.discoveryClient = discoveryClient;
-        this.streamSubscriptionService = streamSubscriptionService;
-        this.discoveryServiceProperties = discoveryServiceProperties;
+        this.hystrixSubscriptionService = hystrixSubscriptionService;
     }
 
     @Scheduled(fixedDelayString = "${discoveryService.fixedDelayMs}")
     void discover() {
-        List<String> discoveredServices = discoveryClient.getServices();
-        discoveredServices.stream().filter(discoveredService -> !registeredServices.contains(discoveredService)).forEach(this::registerService);
-        registeredServices.stream().filter(registeredService -> !discoveredServices.contains(registeredService)).forEach(this::unregisterService);
+        List<ServiceInstance> discoveredServices = discoveryClient.getAllInstances();
+        discoveredServices.stream()
+                .filter(discoveredService -> !registeredServiceInstances.contains(discoveredService))
+                .forEach(this::registerService);
+        registeredServiceInstances.stream()
+                .filter(registeredService -> !discoveredServices.contains(registeredService))
+                .forEach(this::unregisterService);
     }
 
-    private void registerService(String service) {
-        if (service != null) {
-            log.info("Registering: {}", service);
-            registeredServices.add(service);
-            streamSubscriptionService.subscribe(new HystrixServiceStream(service, buildStreamUrl(service)));
+    private void registerService(ServiceInstance serviceInstance) {
+        if (serviceInstance != null) {
+            log.info("Registering: {}", serviceInstance.getServiceId());
+            registeredServiceInstances.add(serviceInstance);
+            hystrixSubscriptionService.subscribe(serviceInstance);
         }
     }
 
-    private void unregisterService(String service) {
-        if (service != null) {
-            log.info("Unregistering: {}", service);
-            registeredServices.remove(service);
-            streamSubscriptionService.unSubscribe(service);
+    private void unregisterService(ServiceInstance serviceInstance) {
+        if (serviceInstance != null) {
+            log.info("Unregistering: {}", serviceInstance.getServiceId());
+            registeredServiceInstances.remove(serviceInstance);
+            hystrixSubscriptionService.unSubscribe(serviceInstance);
         }
-    }
-
-    private String buildStreamUrl(String service) {
-        return discoveryServiceProperties.getPrefixUrl() + service + discoveryServiceProperties.getSuffixUrl();
     }
 }

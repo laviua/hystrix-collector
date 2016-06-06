@@ -7,8 +7,8 @@ import org.springframework.stereotype.Component;
  * Created by Oleksandr Loushkin on 05.06.2016.
  */
 @Component
-@ConfigurationProperties(prefix="discoveryService")
-public class DiscoveryServiceProperties {
+@ConfigurationProperties(prefix="hystrix")
+public class HystrixProperties {
 
     private String prefixUrl;
     private String suffixUrl;
