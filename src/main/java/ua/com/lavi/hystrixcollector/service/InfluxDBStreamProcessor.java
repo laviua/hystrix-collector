@@ -6,9 +6,9 @@ import org.influxdb.dto.Point;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.stereotype.Component;
 import ua.com.lavi.hystrixcollector.config.properties.InfluxDBProperties;
+import ua.com.lavi.hystrixcollector.model.hystrix.ServiceInstance;
 import ua.com.lavi.hystrixcollector.model.hystrix.HystrixData;
 
 import java.util.concurrent.TimeUnit;

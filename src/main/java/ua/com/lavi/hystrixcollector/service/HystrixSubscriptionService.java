@@ -6,12 +6,12 @@ import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.stereotype.Service;
 import rx.Subscription;
 import rx.apache.http.ObservableHttp;
 import ua.com.lavi.hystrixcollector.config.properties.HttpClientProperties;
 import ua.com.lavi.hystrixcollector.config.properties.HystrixProperties;
+import ua.com.lavi.hystrixcollector.model.hystrix.ServiceInstance;
 
 import java.util.HashMap;
 import java.util.Map;

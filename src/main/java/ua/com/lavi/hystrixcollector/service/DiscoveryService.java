@@ -3,11 +3,10 @@ package ua.com.lavi.hystrixcollector.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.cloud.consul.discovery.ConsulDiscoveryClient;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import ua.com.lavi.hystrixcollector.config.properties.DiscoveryServiceProperties;
+import ua.com.lavi.hystrixcollector.model.hystrix.ServiceInstance;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -20,13 +19,13 @@ public class DiscoveryService {
 
     private final static Logger log = LoggerFactory.getLogger(DiscoveryService.class);
 
-    private final ConsulDiscoveryClient discoveryClient;
+    private final SimpleConsulDiscoveryClient discoveryClient;
     private final DiscoveryServiceProperties discoveryServiceProperties;
     private final HystrixSubscriptionService hystrixSubscriptionService;
     private List<ServiceInstance> registeredServiceInstances = new CopyOnWriteArrayList<>();
 
     @Autowired
-    public DiscoveryService(ConsulDiscoveryClient discoveryClient,
+    public DiscoveryService(SimpleConsulDiscoveryClient discoveryClient,
             DiscoveryServiceProperties discoveryServiceProperties,
             HystrixSubscriptionService hystrixSubscriptionService) {
         this.discoveryClient = discoveryClient;
@@ -36,14 +35,17 @@ public class DiscoveryService {
 
     @Scheduled(fixedDelayString = "${discoveryService.fixedDelayMs}")
     void discover() {
-        List<ServiceInstance> discoveredServices = discoveryClient.getAllInstances();
-        discoveredServices.stream()
+        List<ServiceInstance> discoveredInstances = discoveryClient.getAllInstances();
+
+        discoveredInstances.stream()
+                .filter(discoveredInstance -> discoveredInstance.isAlive() == discoveryServiceProperties.isOnlyAlive())
                 .filter(discoveredService -> !discoveryServiceProperties.getExclude()
                         .contains(discoveredService.getServiceId()))
                 .filter(discoveredService -> !registeredServiceInstances.contains(discoveredService))
                 .forEach(this::registerService);
+
         registeredServiceInstances.stream()
-                .filter(registeredService -> !discoveredServices.contains(registeredService))
+                .filter(registeredService -> !discoveredInstances.contains(registeredService))
                 .forEach(this::unregisterService);
     }
 

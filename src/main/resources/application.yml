@@ -8,6 +8,7 @@ hystrix:
 discoveryService:
   fixedDelayMs: ${PC_DISCOVERY_SERVICE_FIXED_DELAY_MS:10000}
   exclude: consul, application
+  onlyAlive: true
 
 httpClient:
   retry: 3
