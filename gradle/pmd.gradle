@@ -11,7 +11,7 @@ tasks.withType(Pmd) {
 }
 
 pmd {
-    toolVersion = "5.4.1"
+    toolVersion = "5.4.2"
     sourceSets = [sourceSets.main]
     ignoreFailures = false
     consoleOutput = true
