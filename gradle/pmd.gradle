@@ -10,6 +10,13 @@ tasks.withType(Pmd) {
     }
 }
 
+dependencies {
+    pmd(
+            'net.sourceforge.pmd:pmd-core:5.4.2',
+            'net.sourceforge.pmd:pmd-java:5.4.2'
+    )
+}
+
 pmd {
     toolVersion = "5.4.2"
     sourceSets = [sourceSets.main]
