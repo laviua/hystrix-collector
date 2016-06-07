@@ -3,10 +3,11 @@ security:
     enabled: false
 
 hystrix:
-  suffixUrl: ${PC_DISCOVERY_SERVICE_SUFFIX_URL:/hystrix/hystrix.stream}
+  suffixUrl: ${PC_HYSTRIX_SUFFIX_URL:/hystrix/hystrix.stream}
 
 discoveryService:
   fixedDelayMs: ${PC_DISCOVERY_SERVICE_FIXED_DELAY_MS:10000}
+  exclude: consul, application
 
 influxDB:
   url: ${PC_INFLUXDB_URL:http://localhost:8086}

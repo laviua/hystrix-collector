@@ -7,6 +7,7 @@ import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.consul.discovery.ConsulDiscoveryClient;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import ua.com.lavi.hystrixcollector.config.properties.DiscoveryServiceProperties;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -20,13 +21,15 @@ public class DiscoveryService {
     private final static Logger log = LoggerFactory.getLogger(DiscoveryService.class);
 
     private final ConsulDiscoveryClient discoveryClient;
+    private final DiscoveryServiceProperties discoveryServiceProperties;
     private final HystrixSubscriptionService hystrixSubscriptionService;
     private List<ServiceInstance> registeredServiceInstances = new CopyOnWriteArrayList<>();
 
     @Autowired
     public DiscoveryService(ConsulDiscoveryClient discoveryClient,
-            HystrixSubscriptionService hystrixSubscriptionService) {
+                            DiscoveryServiceProperties discoveryServiceProperties, HystrixSubscriptionService hystrixSubscriptionService) {
         this.discoveryClient = discoveryClient;
+        this.discoveryServiceProperties = discoveryServiceProperties;
         this.hystrixSubscriptionService = hystrixSubscriptionService;
     }
 
@@ -34,6 +37,7 @@ public class DiscoveryService {
     void discover() {
         List<ServiceInstance> discoveredServices = discoveryClient.getAllInstances();
         discoveredServices.stream()
+                .filter(discoveredService -> !discoveryServiceProperties.getExclude().contains(discoveredService.getServiceId()))
                 .filter(discoveredService -> !registeredServiceInstances.contains(discoveredService))
                 .forEach(this::registerService);
         registeredServiceInstances.stream()
