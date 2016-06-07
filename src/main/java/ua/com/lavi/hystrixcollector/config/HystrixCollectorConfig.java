@@ -1,8 +1,5 @@
 package ua.com.lavi.hystrixcollector.config;
 
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
-import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.influxdb.InfluxDB;
 import org.influxdb.InfluxDBFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,23 +15,6 @@ public class HystrixCollectorConfig {
 
     @Autowired
     InfluxDBProperties influxDBProperties;
-
-    @Bean(destroyMethod = "close")
-    public CloseableHttpAsyncClient closeableHttpAsyncClient() {
-
-        final RequestConfig requestConfig = RequestConfig.custom()
-                .setSocketTimeout(3000)
-                .setConnectTimeout(5000).build();
-
-        final CloseableHttpAsyncClient httpclient = HttpAsyncClients.custom()
-                .setDefaultRequestConfig(requestConfig)
-                .setMaxConnPerRoute(20)
-                .setMaxConnTotal(50)
-                .build();
-
-        httpclient.start();
-        return httpclient;
-    }
 
     @Bean
     public InfluxDB influxDB() {

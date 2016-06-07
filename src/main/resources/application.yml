@@ -9,6 +9,13 @@ discoveryService:
   fixedDelayMs: ${PC_DISCOVERY_SERVICE_FIXED_DELAY_MS:10000}
   exclude: consul, application
 
+httpClient:
+  retry: 3
+  socketTimeoutMs: 10000
+  connectTimeoutMs: 10000
+  maxConnPerRoute: 100
+  maxConnTotal: 200
+
 influxDB:
   url: ${PC_INFLUXDB_URL:http://localhost:8086}
   username: ${PC_INFLUXDB_USERNAME:root}

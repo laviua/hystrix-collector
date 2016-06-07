@@ -27,7 +27,8 @@ public class DiscoveryService {
 
     @Autowired
     public DiscoveryService(ConsulDiscoveryClient discoveryClient,
-                            DiscoveryServiceProperties discoveryServiceProperties, HystrixSubscriptionService hystrixSubscriptionService) {
+            DiscoveryServiceProperties discoveryServiceProperties,
+            HystrixSubscriptionService hystrixSubscriptionService) {
         this.discoveryClient = discoveryClient;
         this.discoveryServiceProperties = discoveryServiceProperties;
         this.hystrixSubscriptionService = hystrixSubscriptionService;
@@ -37,7 +38,8 @@ public class DiscoveryService {
     void discover() {
         List<ServiceInstance> discoveredServices = discoveryClient.getAllInstances();
         discoveredServices.stream()
-                .filter(discoveredService -> !discoveryServiceProperties.getExclude().contains(discoveredService.getServiceId()))
+                .filter(discoveredService -> !discoveryServiceProperties.getExclude()
+                        .contains(discoveredService.getServiceId()))
                 .filter(discoveredService -> !registeredServiceInstances.contains(discoveredService))
                 .forEach(this::registerService);
         registeredServiceInstances.stream()
@@ -49,7 +51,7 @@ public class DiscoveryService {
         if (serviceInstance != null) {
             log.info("Registering: {}", serviceInstance.getServiceId());
             registeredServiceInstances.add(serviceInstance);
-            hystrixSubscriptionService.subscribe(serviceInstance);
+            hystrixSubscriptionService.doSubscribe(serviceInstance);
         }
     }
 
@@ -57,7 +59,7 @@ public class DiscoveryService {
         if (serviceInstance != null) {
             log.info("Unregistering: {}", serviceInstance.getServiceId());
             registeredServiceInstances.remove(serviceInstance);
-            hystrixSubscriptionService.unSubscribe(serviceInstance);
+            hystrixSubscriptionService.doUnSubscribe(serviceInstance);
         }
     }
 }
