@@ -37,14 +37,14 @@ public class HystrixSubscriptionService {
         this.httpClientProperties = httpClientProperties;
     }
 
-    public void doSubscribe(ServiceInstance serviceInstance) {
+    void doSubscribe(ServiceInstance serviceInstance) {
         String url = serviceInstance.getUri().toString() + hystrixProperties.getSuffixUrl();
         log.info("Subscribing: {}", url);
         Subscription subscription = ObservableHttp.createGet(url, closeableHttpAsyncClient()).toObservable().
                 flatMap(response -> response.getContent().map(String::new)).
                 filter(hystrixEvent -> hystrixEvent.startsWith("data: ")).
                 map(data -> data.substring("data: ".length())).
-                map(data -> influxDBStreamProcessor.process(data, serviceInstance)).
+                doOnNext(data -> influxDBStreamProcessor.process(data, serviceInstance)).
                 doOnError((e) -> handleError(e, serviceInstance)).
                 retry(httpClientProperties.getRetry()).
                 subscribe();
@@ -58,9 +58,10 @@ public class HystrixSubscriptionService {
     }
 
 
-    public void doUnSubscribe(ServiceInstance serviceInstance) {
+    void doUnSubscribe(ServiceInstance serviceInstance) {
         log.info("Unsubscribing: {}", serviceInstance.getUri());
         subscriptions.get(serviceInstance).unsubscribe();
+        subscriptions.remove(serviceInstance);
     }
 
     private CloseableHttpAsyncClient closeableHttpAsyncClient() {

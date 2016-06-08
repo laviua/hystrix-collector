@@ -1,51 +1,58 @@
 package ua.com.lavi.hystrixcollector.model.hystrix;
 
 /**
- * Created by Oleksandr Loushkin on 04.06.2016.
+ * Created by Oleksandr Loushkin on 08.06.2016.
  */
-@SuppressWarnings("PMD")
-public class HystrixData {
-    public String type;
-    public String name;
-    public String group;
-    public long currentTime;
-    public boolean isCircuitBreakerOpen;
-    public int errorPercentage;
-    public int errorCount;
-    public int requestCount;
-    public int rollingCountCollapsedRequests;
-    public int rollingCountExceptionsThrown;
-    public int rollingCountFailure;
-    public int rollingCountFallbackFailure;
-    public int rollingCountFallbackRejection;
-    public int rollingCountFallbackSuccess;
-    public int rollingCountResponsesFromCache;
-    public int rollingCountSemaphoreRejected;
-    public int rollingCountShortCircuited;
-    public int rollingCountSuccess;
-    public int rollingCountThreadPoolRejected;
-    public int rollingCountTimeout;
-    public int currentConcurrentExecutionCount;
-    public int latencyExecuteMean;
-    public LatencyExecute latencyExecute;
-    public int latencyTotalMean;
-    public LatencyTotal latencyTotal;
-    public int propertyValueCircuitBreakerRequestVolumeThreshold;
-    public int propertyValueCircuitBreakerSleepWindowInMilliseconds;
-    public int propertyValueCircuitBreakerErrorThresholdPercentage;
-    public boolean propertyValueCircuitBreakerForceOpen;
-    public boolean propertyValueCircuitBreakerForceClosed;
-    public boolean propertyValueCircuitBreakerEnabled;
-    public String propertyValueExecutionIsolationStrategy;
-    public int propertyValueExecutionIsolationThreadTimeoutInMilliseconds;
-    public boolean propertyValueExecutionIsolationThreadInterruptOnTimeout;
-    public Object propertyValueExecutionIsolationThreadPoolKeyOverride;
-    public int propertyValueExecutionIsolationSemaphoreMaxConcurrentRequests;
-    public int propertyValueFallbackIsolationSemaphoreMaxConcurrentRequests;
-    public int propertyValueMetricsRollingStatisticalWindowInMilliseconds;
-    public boolean propertyValueRequestCacheEnabled;
-    public boolean propertyValueRequestLogEnabled;
-    public int reportingHosts;
+public class HystrixCommandData {
+
+    private String type;
+    private String name;
+    private String group;
+    private long currentTime;
+    private boolean isCircuitBreakerOpen;
+    private int errorPercentage;
+    private int errorCount;
+    private int requestCount;
+    private int rollingCountBadRequests;
+    private int rollingCountCollapsedRequests;
+    private int rollingCountEmit;
+    private int rollingCountExceptionsThrown;
+    private int rollingCountFailure;
+    private int rollingCountFallbackEmit;
+    private int rollingCountFallbackFailure;
+    private int rollingCountFallbackMissing;
+    private int rollingCountFallbackRejection;
+    private int rollingCountFallbackSuccess;
+    private int rollingCountResponsesFromCache;
+    private int rollingCountSemaphoreRejected;
+    private int rollingCountShortCircuited;
+    private int rollingCountSuccess;
+    private int rollingCountThreadPoolRejected;
+    private int rollingCountTimeout;
+    private int currentConcurrentExecutionCount;
+    private int rollingMaxConcurrentExecutionCount;
+    private int latencyExecuteMean;
+    private LatencyExecute latencyExecute;
+    private int latencyTotalMean;
+    private LatencyTotal latencyTotal;
+    private int propertyValueCircuitBreakerRequestVolumeThreshold;
+    private int propertyValueCircuitBreakerSleepWindowInMilliseconds;
+    private int propertyValueCircuitBreakerErrorThresholdPercentage;
+    private boolean propertyValueCircuitBreakerForceOpen;
+    private boolean propertyValueCircuitBreakerForceClosed;
+    private boolean propertyValueCircuitBreakerEnabled;
+    private String propertyValueExecutionIsolationStrategy;
+    private int propertyValueExecutionIsolationThreadTimeoutInMilliseconds;
+    private int propertyValueExecutionTimeoutInMilliseconds;
+    private boolean propertyValueExecutionIsolationThreadInterruptOnTimeout;
+    private Object propertyValueExecutionIsolationThreadPoolKeyOverride;
+    private int propertyValueExecutionIsolationSemaphoreMaxConcurrentRequests;
+    private int propertyValueFallbackIsolationSemaphoreMaxConcurrentRequests;
+    private int propertyValueMetricsRollingStatisticalWindowInMilliseconds;
+    private boolean propertyValueRequestCacheEnabled;
+    private boolean propertyValueRequestLogEnabled;
+    private int reportingHosts;
+    private String threadPool;
 
     public String getType() {
         return type;
@@ -63,7 +70,7 @@ public class HystrixData {
         return currentTime;
     }
 
-    public boolean getCircuitBreakerOpen() {
+    public boolean isCircuitBreakerOpen() {
         return isCircuitBreakerOpen;
     }
 
@@ -79,8 +86,16 @@ public class HystrixData {
         return requestCount;
     }
 
+    public int getRollingCountBadRequests() {
+        return rollingCountBadRequests;
+    }
+
     public int getRollingCountCollapsedRequests() {
         return rollingCountCollapsedRequests;
+    }
+
+    public int getRollingCountEmit() {
+        return rollingCountEmit;
     }
 
     public int getRollingCountExceptionsThrown() {
@@ -91,8 +106,16 @@ public class HystrixData {
         return rollingCountFailure;
     }
 
+    public int getRollingCountFallbackEmit() {
+        return rollingCountFallbackEmit;
+    }
+
     public int getRollingCountFallbackFailure() {
         return rollingCountFallbackFailure;
+    }
+
+    public int getRollingCountFallbackMissing() {
+        return rollingCountFallbackMissing;
     }
 
     public int getRollingCountFallbackRejection() {
@@ -131,6 +154,10 @@ public class HystrixData {
         return currentConcurrentExecutionCount;
     }
 
+    public int getRollingMaxConcurrentExecutionCount() {
+        return rollingMaxConcurrentExecutionCount;
+    }
+
     public int getLatencyExecuteMean() {
         return latencyExecuteMean;
     }
@@ -159,15 +186,15 @@ public class HystrixData {
         return propertyValueCircuitBreakerErrorThresholdPercentage;
     }
 
-    public boolean getPropertyValueCircuitBreakerForceOpen() {
+    public boolean isPropertyValueCircuitBreakerForceOpen() {
         return propertyValueCircuitBreakerForceOpen;
     }
 
-    public boolean getPropertyValueCircuitBreakerForceClosed() {
+    public boolean isPropertyValueCircuitBreakerForceClosed() {
         return propertyValueCircuitBreakerForceClosed;
     }
 
-    public boolean getPropertyValueCircuitBreakerEnabled() {
+    public boolean isPropertyValueCircuitBreakerEnabled() {
         return propertyValueCircuitBreakerEnabled;
     }
 
@@ -179,7 +206,11 @@ public class HystrixData {
         return propertyValueExecutionIsolationThreadTimeoutInMilliseconds;
     }
 
-    public boolean getPropertyValueExecutionIsolationThreadInterruptOnTimeout() {
+    public int getPropertyValueExecutionTimeoutInMilliseconds() {
+        return propertyValueExecutionTimeoutInMilliseconds;
+    }
+
+    public boolean isPropertyValueExecutionIsolationThreadInterruptOnTimeout() {
         return propertyValueExecutionIsolationThreadInterruptOnTimeout;
     }
 
@@ -199,15 +230,19 @@ public class HystrixData {
         return propertyValueMetricsRollingStatisticalWindowInMilliseconds;
     }
 
-    public boolean getPropertyValueRequestCacheEnabled() {
+    public boolean isPropertyValueRequestCacheEnabled() {
         return propertyValueRequestCacheEnabled;
     }
 
-    public boolean getPropertyValueRequestLogEnabled() {
+    public boolean isPropertyValueRequestLogEnabled() {
         return propertyValueRequestLogEnabled;
     }
 
     public int getReportingHosts() {
         return reportingHosts;
+    }
+
+    public String getThreadPool() {
+        return threadPool;
     }
 }

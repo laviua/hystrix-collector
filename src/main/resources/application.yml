@@ -3,7 +3,7 @@ security:
     enabled: false
 
 hystrix:
-  suffixUrl: ${PC_HYSTRIX_SUFFIX_URL:/hystrix/hystrix.stream}
+  suffixUrl: ${PC_HYSTRIX_SUFFIX_URL:/service/hystrix.stream}
 
 discoveryService:
   fixedDelayMs: ${PC_DISCOVERY_SERVICE_FIXED_DELAY_MS:10000}
