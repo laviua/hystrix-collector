@@ -2,6 +2,10 @@ package ua.com.lavi.hystrixcollector.config.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
+import ua.com.lavi.hystrixcollector.model.hystrix.ServiceInstance;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Oleksandr Loushkin on 05.06.2016.
@@ -10,22 +14,13 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix="hystrix")
 public class HystrixProperties {
 
-    private String prefixUrl;
-    private String suffixUrl;
+    private List<ServiceInstance> subscriptions = new ArrayList<>();
 
-    public String getPrefixUrl() {
-        return prefixUrl;
+    public List<ServiceInstance> getSubscriptions() {
+        return subscriptions;
     }
 
-    public void setPrefixUrl(String prefixUrl) {
-        this.prefixUrl = prefixUrl;
-    }
-
-    public String getSuffixUrl() {
-        return suffixUrl;
-    }
-
-    public void setSuffixUrl(String suffixUrl) {
-        this.suffixUrl = suffixUrl;
+    public void setSubscriptions(List<ServiceInstance> subscriptions) {
+        this.subscriptions = subscriptions;
     }
 }

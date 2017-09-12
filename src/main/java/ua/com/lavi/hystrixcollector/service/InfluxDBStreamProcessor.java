@@ -7,8 +7,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import ua.com.lavi.hystrixcollector.config.properties.InfluxDBProperties;
-import ua.com.lavi.hystrixcollector.model.hystrix.*;
+import ua.com.lavi.hystrixcollector.model.hystrix.HystrixCommandData;
+import ua.com.lavi.hystrixcollector.model.hystrix.HystrixThreadPoolData;
+import ua.com.lavi.hystrixcollector.model.hystrix.ServiceInstance;
+import ua.com.lavi.hystrixcollector.model.hystrix.StreamType;
 
 import java.util.concurrent.TimeUnit;
 
@@ -28,14 +30,11 @@ public class InfluxDBStreamProcessor {
     private Gson gson = new Gson();
 
     private final InfluxDB influxDB;
-    private final InfluxDBProperties influxDBProperties;
 
     @Autowired
-    public InfluxDBStreamProcessor(InfluxDB influxDB, InfluxDBProperties influxDBProperties) {
+    public InfluxDBStreamProcessor(InfluxDB influxDB) {
         this.influxDB = influxDB;
-        this.influxDBProperties = influxDBProperties;
     }
-
 
     void process(String data, ServiceInstance serviceInstance) {
         StreamType streamType = gson.fromJson(data, StreamType.class);
@@ -91,10 +90,14 @@ public class InfluxDBStreamProcessor {
 
     }
 
+    /**
+     * Write a single Point to the default database.
+     * @param point
+     */
     private void writeData(Point point) {
         try {
 
-            influxDB.write(influxDBProperties.getDbName(), "default", point);
+            influxDB.write(point);
         } catch (Exception e) {
             log.error("Error while writing to db: ", e);
         }

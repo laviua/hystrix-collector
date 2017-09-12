@@ -3,12 +3,10 @@ security:
     enabled: false
 
 hystrix:
-  suffixUrl: ${PC_HYSTRIX_SUFFIX_URL:/service/hystrix.stream}
-
-discoveryService:
-  fixedDelayMs: ${PC_DISCOVERY_SERVICE_FIXED_DELAY_MS:10000}
-  exclude: consul, application
-  onlyAlive: true
+  subscriptions:
+    -
+      serviceId: myService
+      url: "http://localhost:8080/hystrix.stream"
 
 httpClient:
   retry: 3
@@ -18,17 +16,14 @@ httpClient:
   maxConnTotal: 200
 
 influxDB:
-  url: ${PC_INFLUXDB_URL:http://localhost:8086}
-  username: ${PC_INFLUXDB_USERNAME:root}
-  password: ${PC_INFLUXDB_PASSWORD:root}
-  dbName: ${PC_INFLUXDB_DBNAME:hystrix}
+  url: ${INFLUXDB_URL:http://localhost:8086}
+  username: ${INFLUXDB_USERNAME:root}
+  password: ${INFLUXDB_PASSWORD:root}
+  dbName: ${INFLUXDB_DBNAME:hystrix}
 
 debug: false
 spring:
+  application:
+    name: hystrix-collector
   main:
     web-environment: false
-  cloud:
-    consul:
-      discovery:
-        enabled: true
-      enabled: true
